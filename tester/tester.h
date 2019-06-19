@@ -1,7 +1,7 @@
 #ifndef TESTER_H
 #define TESTER_H
 
-const int NUMBER_OF_TESTS = 2;
+const int NUMBER_OF_TESTS = 100;
 
 #include "../checker/checker.h"
 #include "../matrix/matrix.h"

@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <iterator>
+#include <algorithm>
 
 #include "tester.h"
 #include "../mocker/mocker.h"
@@ -45,12 +47,21 @@ void Tester::execute () {
 template <typename T>
 Matrix <T> Tester::createRandomMatrix (int n_rows, int n_columns) {
   Matrix <T> matrix(n_rows, n_columns);
+  std::vector <std::pair <T, std::pair <int, int>>> positions;
   for (int row = 0; row < n_rows; row++) {
     for (int column = 0; column < n_columns; column++) {
       // [0, 1] range of values for the matrix to get a sparse matrix with
       // more probability
-      matrix.set(row, column, Mocker::generateRandomNumber <T> (0, 1));
+      T new_value = Mocker::generateRandomNumber <T> (0, 1);
+      positions.push_back({new_value, {row, column}});
     }
+  }
+  std::random_shuffle(begin(positions), end(positions));
+  for (auto elem: positions) {
+    int row = elem.second.first;
+    int column = elem.second.second;
+    T new_val = elem.first;
+    matrix.set(row, column, new_val);
   }
   return matrix;
 }

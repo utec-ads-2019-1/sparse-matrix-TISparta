@@ -10,8 +10,8 @@ void Tester::execute () {
   std::vector <Checker <MT>> checker(NUMBER_OF_TESTS);
   for (int test = 0; test < NUMBER_OF_TESTS; test++) {
     try {
-      int n_rows = 4; // Mocker::generateRandomNumber <MT> ();
-      int n_columns = 3; //Mocker::generateRandomNumber <MT> ();
+      int n_rows = Mocker::generateRandomNumber <MT> ();
+      int n_columns = Mocker::generateRandomNumber <MT> ();
       Matrix <MT> matrix1 = createRandomMatrix <MT> (n_rows, n_columns);
       Matrix <MT> matrix2 = createRandomMatrix <MT> (n_rows, n_columns);
       testAssignment <MT> (matrix1, checker[test]);
@@ -28,7 +28,9 @@ Matrix <T> Tester::createRandomMatrix (int n_rows, int n_columns) {
   Matrix <T> matrix(n_rows, n_columns);
   for (int row = 0; row < n_rows; row++) {
     for (int column = 0; column < n_columns; column++) {
-      matrix.set(row, column, Mocker::generateRandomNumber <T> ());
+      // [0, 1] range of values for the matrix to get a sparse matrix with
+      // more probability
+      matrix.set(row, column, Mocker::generateRandomNumber <T> (0, 1));
     }
   }
   return std::move(matrix);

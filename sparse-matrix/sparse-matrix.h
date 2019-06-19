@@ -125,7 +125,7 @@ class SparseMatrix {
         prev = cur;
         cur = cur -> down;
       }
-      prev -> down = cur;
+      prev -> down = node;
       column_size[column]++;
     }
 

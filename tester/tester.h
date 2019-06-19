@@ -1,14 +1,27 @@
 #ifndef TESTER_H
 #define TESTER_H
 
-#include "../mocker/mocker.h"
-#include "../sparse-matrix/matrix.h"
+const int NUMBER_OF_TESTS = 1;
 
-const int NUMBER_OF_TESTS = 10;
+#include "../checker/checker.h"
+#include "../matrix/matrix.h"
+#include "../sparse-matrix/sparse-matrix.h"
 
 class Tester {
   public:
-    static void execute();
+    static void execute ();
+  private:
+    template <typename T>
+    static Matrix <T> createRandomMatrix (int rows, int columns);
+
+    template <typename T>
+    static SparseMatrix <T> setSparseMatrix (const Matrix <T>& matrix);
+
+    template <typename T>
+    static void testAssignment (const Matrix <T>& matrix, Checker <T>& checker);
+
+    template <typename T>
+    static void testSum (const Matrix <T>& matrix1, const Matrix <T>& matrix2, Checker <T>& chequer);
 };
 
 #endif

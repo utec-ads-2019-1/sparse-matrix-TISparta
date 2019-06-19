@@ -30,3 +30,22 @@ static void update (int row, int column, int new_val,
   ret_row_size[row]++;
   ret_column_size[column]++;
 }
+
+template <typename T>
+static T dotProduct (Node <T>* operand1, Node <T>* operand2) {
+  Node <T>* pib1 = operand1;
+  Node <T>* pib2 = operand2;
+  T ret = 0;
+  while (pib1 and pib2) {
+    if (pib1 -> column == pib2 -> row) {
+      ret += pib1 -> value * pib2 -> value;
+      pib1 = pib1 -> next;
+      pib2 = pib2 -> down;
+    } else if (pib1 -> column < pib2 -> row) {
+      pib1 = pib1 -> next;
+    } else if (pib2 -> row < pib1 -> column) {
+      pib2 = pib2 -> down;
+    }
+  }
+  return ret;
+}

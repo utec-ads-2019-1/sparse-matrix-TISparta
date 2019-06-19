@@ -58,7 +58,18 @@ class Matrix {
     }
 
     Matrix <T> operator * (const Matrix& other) const {
-
+      if (n_columns != other.getNumberRows()) throw "Can not multiply these matrices";
+      Matrix ret(n_rows, other.getNumberColumns());
+      for (int row = 0; row < n_rows; row++) {
+        for (int column = 0; column < n_columns; column++) {
+          T new_value = 0;
+          for (int it = 0; it < n_columns; it++) {
+            new_value += (*this)(row, it) * other(it, column);
+          }
+          ret.set(row, column, new_value);
+        }
+      }
+      return ret;
     }
 
     Matrix <T> operator ^ (const int power) const {

@@ -22,6 +22,11 @@ class Tester {
 
     template <typename T>
     static void testSum (const Matrix <T>& matrix1, const Matrix <T>& matrix2, Checker <T>& checker);
+
+    template <typename T>
+    static void testMultiplication (const Matrix <T>& matrix1, const Matrix <T>& matrix2, Checker <T>& checker);
+
+
 };
 
 #endif

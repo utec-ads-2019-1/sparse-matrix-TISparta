@@ -38,10 +38,10 @@ class SparseMatrix {
       column_size.clear();
     }
 
+    // It also deletes
     void set (unsigned row, unsigned column, T value) {
       if (not (0 <= row and row < n_rows)) throw "Row index out of scope";
       if (not (0 <= column and column < n_columns)) throw "Column index out of scope";
-      if (value == 0) return;
       Node <T>* new_node = new Node <T> (row, column, value);
       setRow(row, column, new_node);
       setColumn(row, column, new_node);
@@ -213,16 +213,29 @@ class SparseMatrix {
       Node <T>* prev = nullptr;
       Node <T>* cur = row_first_node[row];
       if (not cur) {
+        if (node -> value == 0) return;
         row_first_node[row] = node;
         row_size[row]++;
         return;
       }
       while (cur) {
         if (cur -> column == column) {
-          cur -> value = node -> value;
+          if (node -> value == 0) {
+            if (not prev) {
+              row_first_node[row] = cur -> next;
+            } else {
+              Node <T>* tmp = cur;
+              prev -> next = cur -> next;
+              delete tmp;
+            }
+            row_size[row]--;
+          } else { 
+            cur -> value = node -> value;
+          }
           return;
         }
         if (not (cur -> column <= column)) {
+          if (node -> value == 0) return;
           if (not prev) {
             row_first_node[row] = node;
           } else {
@@ -235,24 +248,38 @@ class SparseMatrix {
         prev = cur;
         cur = cur -> next;
       }
-      prev -> next = node;
-      row_size[row]++;
+      if (node -> value != 0) {
+        prev -> next = node;
+        row_size[row]++;
+      }
     }
 
     void setColumn (int row, int column, Node <T>*& node) {
       Node <T>* prev = nullptr;
       Node <T>* cur = column_first_node[column];
       if (not cur) {
+        if (node -> value == 0) return;
         column_first_node[column] = node;
         column_size[column]++;
         return;
       }
       while (cur) {
         if (cur -> row == row) {
-          cur -> value = node -> value;
+          if (node -> value == 0) {
+            if (not prev) {
+              column_first_node[column] = cur -> down;
+            } else {
+              Node <T>* tmp = cur;
+              prev -> down = cur -> down;
+            }
+            column_size[column]--;
+          } else { 
+            cur -> value = node -> value;
+          }
           return;
         }
         if (not (cur -> row <= row)) {
+          if (node -> value == 0) return;
           if (not prev) {
             column_first_node[column] = node;
           }
@@ -266,8 +293,10 @@ class SparseMatrix {
         prev = cur;
         cur = cur -> down;
       }
-      prev -> down = node;
-      column_size[column]++;
+      if (node -> value != 0) {
+        prev -> down = node;
+        column_size[column]++;
+      }
     }
 
     T getByRow (int row, int column) const {

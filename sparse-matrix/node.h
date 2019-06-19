@@ -7,12 +7,13 @@ class Matrix;
 template <typename T>
 class Node {
 protected:
-    Node<T> *next, *down;
+    Node <T>* next = 0;
+    Node <T>* down = 0;
 
 public:
     explicit Node();
 
-    friend class Matrix<T>;
+    friend class Matrix <T>;
 };
 
 #endif //SPARSE_MATRIX_NODE_H

@@ -13,12 +13,14 @@ void Tester::execute () {
       int n_rows = Mocker::generateRandomNumber <MT> ();
       // For simplicity in the tests we are gonna work with square matrices
       int n_columns = n_rows; //Mocker::generateRandomNumber <MT> ();
+      int scalar = Mocker::generateRandomNumber <MT> ();
       n_columns = n_rows;
       Matrix <MT> matrix1 = createRandomMatrix <MT> (n_rows, n_columns);
       Matrix <MT> matrix2 = createRandomMatrix <MT> (n_rows, n_columns);
       testAssignment <MT> (matrix1, checker[test]);
       testSum <MT> (matrix1, matrix2, checker[test]);
-      testMultiplication <MT> (matrix1, matrix2, checker[test]);
+      testMatrixMultiplication <MT> (matrix1, matrix2, checker[test]);
+      testScalarMultiplication <MT> (scalar, matrix1, checker[test]);
     } catch (const char* message) {
       std::cerr << "Exception raised in test " << test + 1 << std::endl;
       std::cerr << message << std::endl;
@@ -71,10 +73,19 @@ void Tester::testSum (const Matrix <T>& matrix1, const Matrix <T>& matrix2, Chec
 }
 
 template <typename T>
-void Tester::testMultiplication (const Matrix <T>& matrix1, const Matrix <T>& matrix2, Checker <T>& checker) {
+void Tester::testMatrixMultiplication (const Matrix <T>& matrix1, const Matrix <T>& matrix2, Checker <T>& checker) {
   SparseMatrix <T> sparse_matrix1 = setSparseMatrix <T> (matrix1);
   SparseMatrix <T> sparse_matrix2 = setSparseMatrix <T> (matrix2);
   SparseMatrix <T> sparse_multiplication = sparse_matrix1 * sparse_matrix2;
   Matrix <T> matrix_multiplication = matrix1 * matrix2;
   checker.isEqual(sparse_multiplication, matrix_multiplication, "Multiplication is wrong");
+}
+
+template <typename T>
+void Tester::testScalarMultiplication (T scalar, const Matrix <T>& matrix, Checker <T>& checker) {
+  SparseMatrix <T> sparse_matrix = setSparseMatrix <T> (matrix);
+  SparseMatrix <T> sparse_scalar_multiplication = sparse_matrix * scalar;
+  Matrix <T> matrix_scalar_multiplication = matrix * scalar;
+  checker.isEqual(sparse_scalar_multiplication, matrix_scalar_multiplication,
+      "Scalar multiplication is not working");
 }

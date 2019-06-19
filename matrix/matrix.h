@@ -72,12 +72,14 @@ class Matrix {
       return ret;
     }
 
-    Matrix <T> operator ^ (const int power) const {
-
-    }
-    
     Matrix <T> operator * (const int scalar) const {
-
+      Matrix ret(n_rows, n_columns);
+      for (int row = 0; row < n_rows; row++) {
+        for (int column = 0; column < n_columns; column++) {
+          ret.set(row, column, scalar * (*this)(row, column));
+        }
+      }
+      return ret;
     }
 
     Matrix <T> transpose () const {

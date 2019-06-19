@@ -24,8 +24,10 @@ class Tester {
     static void testSum (const Matrix <T>& matrix1, const Matrix <T>& matrix2, Checker <T>& checker);
 
     template <typename T>
-    static void testMultiplication (const Matrix <T>& matrix1, const Matrix <T>& matrix2, Checker <T>& checker);
+    static void testMatrixMultiplication (const Matrix <T>& matrix1, const Matrix <T>& matrix2, Checker <T>& checker);
 
+    template <typename T>
+    static void testScalarMultiplication (T scalar, const Matrix <T>& matrix, Checker <T>& checker);
 
 };
 

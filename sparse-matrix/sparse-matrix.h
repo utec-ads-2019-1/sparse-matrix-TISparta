@@ -126,9 +126,6 @@ class SparseMatrix {
           ret_row_size, ret_column_size);
     }
 
-    SparseMatrix <T> operator * (T scalar) const {
-    }
-
     SparseMatrix <T> operator * (const SparseMatrix <T>& other) const {
       if (n_columns != other.getNumberRows()) throw "Can not multiply these matrices";
       std::vector <Node <T>*> ret_row_first_node(n_rows);
@@ -145,11 +142,30 @@ class SparseMatrix {
           update (row, column, new_val, ret_row_first_node, ret_column_first_node,
               ret_row_size, ret_column_size, ret_row_last_node, ret_column_last_node);
         }
-
       }
       return SparseMatrix(n_rows, n_columns, ret_row_first_node, ret_column_first_node,
           ret_row_size, ret_column_size);
+    }
 
+    SparseMatrix <T> operator * (T scalar) const {
+      std::vector <Node <T>*> ret_row_first_node(n_rows);
+      std::vector <Node <T>*> ret_column_first_node(n_columns);
+      std::vector <unsigned> ret_row_size(n_rows);
+      std::vector <unsigned> ret_column_size(n_columns);
+      std::vector <Node <T>*> ret_column_last_node(n_columns);
+      for (int row = 0; row < n_rows; row++) {
+        Node <T>* ret_row_last_node = nullptr;
+        Node <T>* cur_node_operand1 = row_first_node[row];
+        while (cur_node_operand1) {
+          int column = cur_node_operand1 -> column;
+          T new_val = scalar * cur_node_operand1 -> value;
+          update (row, column, new_val, ret_row_first_node, ret_column_first_node,
+              ret_row_size, ret_column_size, ret_row_last_node, ret_column_last_node);
+          cur_node_operand1 = cur_node_operand1 -> next;
+        }
+      }
+      return SparseMatrix(n_rows, n_columns, ret_row_first_node, ret_column_first_node,
+          ret_row_size, ret_column_size);
     }
 
     SparseMatrix <T> operator - (const SparseMatrix <T>& other) const {

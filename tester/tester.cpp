@@ -10,6 +10,7 @@ void Tester::execute () {
   std::vector <Checker <MT>> checker(NUMBER_OF_TESTS);
   for (int test = 0; test < NUMBER_OF_TESTS; test++) {
     try {
+      std::cout << "Running test " << test + 1 << std::endl;
       int n_rows = Mocker::generateRandomNumber <MT> ();
       // For simplicity in the tests we are gonna work with square matrices
       int n_columns = n_rows; //Mocker::generateRandomNumber <MT> ();
@@ -29,6 +30,14 @@ void Tester::execute () {
       exit(-1);
     }
   }
+  int n_correct = 0;
+  int n_incorrect = 0;
+  for (int test = 0; test < NUMBER_OF_TESTS; test++) {
+    checker[test].printResults(test + 1);
+    n_correct += checker[test].getNumberCorrectTests();
+    n_incorrect += checker[test].getNumberIncorrectTests();
+  }
+  Checker<MT>::printFinalResults(n_correct, n_incorrect);
 }
 
 // For testing purposes this function is implemented in a not optimal but

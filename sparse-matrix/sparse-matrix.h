@@ -5,8 +5,10 @@
 
 #include <iostream>
 #include <vector>
+#include <functional>
 
 #include "node.h"
+#include "helper.h"
 
 template <typename T>
 class SparseMatrix {
@@ -18,6 +20,15 @@ class SparseMatrix {
         column_first_node.resize(n_columns, nullptr);
         column_size.resize(n_columns, 0);
       }
+
+    SparseMatrix (unsigned n_rows, unsigned n_columns,
+        std::vector <Node <T>*> row_first_node,
+        std::vector <Node <T>*> row_column_node,
+        std::vector <unsigned> row_size,
+        std::vector <unsigned> column_size):
+      n_rows(n_rows), n_columns(n_columns),
+      row_first_node(row_first_node), column_first_node(row_column_node),
+      row_size(row_size), column_size(column_size) {}
 
     ~SparseMatrix() {
       for (auto& node: row_first_node) if (node) node -> clear();
@@ -43,12 +54,83 @@ class SparseMatrix {
       return getByColumn(row, column);
     }
 
+    int getNumberRows () const { return n_rows; }
+
+    int getNumberColumns () const { return n_columns; }
+
+    Node <T>* getRowList (unsigned row) const {
+      if (not (0 <= row and row < n_rows)) throw "Row index out of range";
+      return row_first_node[row];
+    }
+
+    Node <T>* getColumnList (unsigned column) const {
+      if (not (0 <= column and column < n_columns)) throw "Column index out of range";
+      return column_first_node[column];
+    }
+
     SparseMatrix <T> operator * (T scalar) const {
     }
     SparseMatrix <T> operator * (const SparseMatrix <T>& other) const {
     }
+
+    // A little heavy implementation but in O(number of 1s in both matrices)
+    // Substraction and multiplication are basically a copy-paste of this
+    // function
     SparseMatrix <T> operator + (const SparseMatrix <T>& other) const {
+      if (n_rows != other.getNumberRows()) throw "The number of rows doest not match";
+      if (n_columns != other.getNumberColumns()) throw "The number of columns doest not match";
+      std::vector <Node <T>*> ret_row_first_node(n_rows);
+      std::vector <Node <T>*> ret_column_first_node(n_columns);
+      std::vector <unsigned> ret_row_size(n_rows);
+      std::vector <unsigned> ret_column_size(n_columns);
+      std::vector <Node <T>*> ret_column_last_node(n_columns);
+      for (int row = 0; row < n_rows; row++) {
+        Node <T>* ret_row_last_node = nullptr;
+        Node <T>* cur_node_operand1 = row_first_node[row];
+        Node <T>* cur_node_operand2 = other.getRowList(row);
+        while (cur_node_operand1 and cur_node_operand2) {
+          if (cur_node_operand1 -> column == cur_node_operand2 -> column) {
+            int new_val = cur_node_operand1 -> value + cur_node_operand2 -> value;
+            int column = cur_node_operand1 -> column;
+            if (new_val != 0) {
+              update(row, column, new_val, ret_row_first_node, ret_column_first_node,
+                  ret_row_size, ret_column_size, ret_row_last_node, ret_column_last_node);
+            }
+            cur_node_operand1 = cur_node_operand1 -> next;
+            cur_node_operand2 = cur_node_operand2 -> next;
+          } else if (cur_node_operand1 -> column < cur_node_operand2 -> column) {
+            int new_val = cur_node_operand1 -> value;
+            int column = cur_node_operand1 -> column;
+            update(row, column, new_val, ret_row_first_node, ret_column_first_node,
+                ret_row_size, ret_column_size, ret_row_last_node, ret_column_last_node);
+            cur_node_operand1 = cur_node_operand1 -> next;
+          } else if (cur_node_operand2 -> column < cur_node_operand1 -> column) {
+            int new_val = cur_node_operand2 -> value;
+            int column = cur_node_operand2 -> column;
+            update(row, column, new_val, ret_row_first_node, ret_column_first_node,
+                ret_row_size, ret_column_size, ret_row_last_node, ret_column_last_node);
+            cur_node_operand2 = cur_node_operand2 -> next;
+          }
+        }
+        while (cur_node_operand1) {
+          int new_val = cur_node_operand1 -> value;
+          int column = cur_node_operand1 -> column;
+          update(row, column, new_val, ret_row_first_node, ret_column_first_node,
+              ret_row_size, ret_column_size, ret_row_last_node, ret_column_last_node);
+          cur_node_operand1 = cur_node_operand1 -> next;
+        }
+        while (cur_node_operand2) {
+          int new_val = cur_node_operand2 -> value;
+          int column = cur_node_operand2 -> column;
+          update (row, column, new_val, ret_row_first_node, ret_column_first_node,
+              ret_row_size, ret_column_size, ret_row_last_node, ret_column_last_node);
+          cur_node_operand2 = cur_node_operand2 -> next;
+        }
+      }
+      return SparseMatrix(n_rows, n_columns, ret_row_first_node, ret_column_first_node,
+          ret_row_size, ret_column_size);
     }
+
     SparseMatrix <T> operator - (const SparseMatrix <T>& other) const {
     }
     SparseMatrix <T> transpose () const {

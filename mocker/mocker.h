@@ -5,7 +5,7 @@
 #include <type_traits>
 
 const int MIN_VAL = 0;
-const int MAX_VAL = 100;
+const int MAX_VAL = 300;
 
 class Mocker {
   public:

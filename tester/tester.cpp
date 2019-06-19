@@ -15,6 +15,7 @@ void Tester::execute () {
       Matrix <MT> matrix1 = createRandomMatrix <MT> (n_rows, n_columns);
       Matrix <MT> matrix2 = createRandomMatrix <MT> (n_rows, n_columns);
       testAssignment <MT> (matrix1, checker[test]);
+      testSum <MT> (matrix1, matrix1, checker[test]);
     } catch (const char* message) {
       std::cerr << "Exception raised in test " << test + 1 << std::endl;
       std::cerr << message << std::endl;
@@ -23,6 +24,8 @@ void Tester::execute () {
   }
 }
 
+// For testing purposes this function is implemented in a not optimal but
+// simple way
 template <typename T>
 Matrix <T> Tester::createRandomMatrix (int n_rows, int n_columns) {
   Matrix <T> matrix(n_rows, n_columns);
@@ -33,7 +36,7 @@ Matrix <T> Tester::createRandomMatrix (int n_rows, int n_columns) {
       matrix.set(row, column, Mocker::generateRandomNumber <T> (0, 1));
     }
   }
-  return std::move(matrix);
+  return matrix;
 }
 
 template <typename T>
@@ -56,6 +59,11 @@ void Tester::testAssignment (const Matrix <T>& matrix, Checker <T>& checker) {
 }
 
 template <typename T>
-void Tester::testSum (const Matrix <T>& matrix1, const Matrix <T>& matrix2, Checker <T>& chequer) {
+void Tester::testSum (const Matrix <T>& matrix1, const Matrix <T>& matrix2, Checker <T>& checker) {
+  SparseMatrix <T> sparse_matrix1 = setSparseMatrix <T> (matrix1);
+  SparseMatrix <T> sparse_matrix2 = setSparseMatrix <T> (matrix2);
+  SparseMatrix <T> sparse_sum = sparse_matrix1 + sparse_matrix2;
+  Matrix <T> matrix_sum = matrix1 + matrix2;
+  checker.isEqual(sparse_sum, matrix_sum, "Sum is wrong");
 }
 

@@ -34,11 +34,27 @@ class Matrix {
     }
 
     Matrix <T> operator + (const Matrix& other) const {
-
+      if (n_rows != other.getNumberRows()) throw "The number of rows doest not match";
+      if (n_columns != other.getNumberColumns()) throw "The number of columns doest not match";
+      Matrix ret(n_rows, n_columns);
+      for (int row = 0; row < n_rows; row++) {
+        for (int column = 0; column < n_columns; column++) {
+          ret.set(row, column, (*this)(row, column) + other(row, column));
+        }
+      }
+      return ret;
     }
 
     Matrix <T> operator - (const Matrix& other) const {
-
+      if (n_rows != other.getNumberRows()) throw "The number of rows doest not match";
+      if (n_columns != other.getNumberColumns()) throw "The number of columns doest not match";
+      Matrix ret(n_rows, n_columns);
+      for (int row = 0; row < n_rows; row++) {
+        for (int column = 0; column < n_columns; column++) {
+          ret.set(row, column, (*this)(row, column) - other(row, column));
+        }
+      }
+      return ret;
     }
 
     Matrix <T> operator * (const Matrix& other) const {

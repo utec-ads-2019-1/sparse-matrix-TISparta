@@ -21,7 +21,7 @@ class Tester {
     static void testAssignment (const Matrix <T>& matrix, Checker <T>& checker);
 
     template <typename T>
-    static void testSum (const Matrix <T>& matrix1, const Matrix <T>& matrix2, Checker <T>& chequer);
+    static void testSum (const Matrix <T>& matrix1, const Matrix <T>& matrix2, Checker <T>& checker);
 };
 
 #endif

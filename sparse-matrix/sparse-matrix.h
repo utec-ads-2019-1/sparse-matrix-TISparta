@@ -169,9 +169,31 @@ class SparseMatrix {
     }
 
     SparseMatrix <T> operator - (const SparseMatrix <T>& other) const {
+      return (*this) + (other * -1);
     }
+    
     SparseMatrix <T> transpose () const {
+      std::vector <Node <T>*> ret_row_first_node(n_columns);
+      std::vector <Node <T>*> ret_column_first_node(n_rows);
+      std::vector <unsigned> ret_row_size(n_columns);
+      std::vector <unsigned> ret_column_size(n_rows);
+      std::vector <Node <T>*> ret_column_last_node(n_rows);
+      SparseMatrix ret(n_columns, n_rows);
+      for (int column = 0; column < n_columns; column++) {
+        Node <T>* ret_row_last_node = nullptr;
+        Node <T>* cur_node_operand1 = column_first_node[column];
+        while (cur_node_operand1) {
+          int row = cur_node_operand1 -> row;
+          T new_val = cur_node_operand1 -> value;
+          update (column, row, new_val, ret_row_first_node, ret_column_first_node,
+              ret_row_size, ret_column_size, ret_row_last_node, ret_column_last_node);
+          cur_node_operand1 = cur_node_operand1 -> down;
+        }
+      }
+      return SparseMatrix(n_rows, n_columns, ret_row_first_node, ret_column_first_node,
+          ret_row_size, ret_column_size);
     }
+    
     void print () const {
       for (int row = 0; row < n_rows; row++) {
         for (int column = 0; column < n_columns; column++) {

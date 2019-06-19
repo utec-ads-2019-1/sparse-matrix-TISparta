@@ -29,6 +29,12 @@ class Tester {
     template <typename T>
     static void testScalarMultiplication (T scalar, const Matrix <T>& matrix, Checker <T>& checker);
 
+    template <typename T>
+    static void testSubstractionMultiplication (const Matrix <T>& matrix1, const Matrix <T>& matrix2, Checker <T>& checker);
+   
+    template <typename T>
+    static void testTranspose (const Matrix <T>& matrix, Checker <T>& checker);
+
 };
 
 #endif

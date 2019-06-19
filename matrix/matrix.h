@@ -83,7 +83,13 @@ class Matrix {
     }
 
     Matrix <T> transpose () const {
-
+      Matrix ret(n_columns, n_rows);
+      for (int row = 0; row < n_rows; row++) {
+        for (int column = 0; column < n_columns; column++) {
+          ret.set(column, row, (*this)(row, column));
+        }
+      }
+      return ret;
     }
 
     void print () const {

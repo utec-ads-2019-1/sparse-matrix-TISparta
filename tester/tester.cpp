@@ -24,7 +24,7 @@ void Tester::execute () {
       testSum <MT> (matrix1, matrix2, checker[test]);
       testMatrixMultiplication <MT> (matrix1, matrix2, checker[test]);
       testScalarMultiplication <MT> (scalar, matrix1, checker[test]);
-      testSubstractionMultiplication <MT> (matrix1, matrix2, checker[test]);
+      testSubstraction <MT> (matrix1, matrix2, checker[test]);
       testTranspose(matrix1, checker[test]);
       testDelete(matrix1, checker[test]);
     } catch (const char* message) {
@@ -114,7 +114,7 @@ void Tester::testScalarMultiplication (T scalar, const Matrix <T>& matrix, Check
 }
 
 template <typename T>
-void Tester::testSubstractionMultiplication (const Matrix <T>& matrix1, const Matrix <T>& matrix2, Checker <T>& checker) {
+void Tester::testSubstraction (const Matrix <T>& matrix1, const Matrix <T>& matrix2, Checker <T>& checker) {
   SparseMatrix <T> sparse_matrix1 = setSparseMatrix <T> (matrix1);
   SparseMatrix <T> sparse_matrix2 = setSparseMatrix <T> (matrix2);
   SparseMatrix <T> sparse_sum = sparse_matrix1 - sparse_matrix2;

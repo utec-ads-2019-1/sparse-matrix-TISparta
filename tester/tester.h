@@ -35,6 +35,9 @@ class Tester {
     template <typename T>
     static void testTranspose (const Matrix <T>& matrix, Checker <T>& checker);
 
+    template <typename T>
+    static void testDelete (const Matrix <T>& matrix, Checker <T>& checker);
+
 };
 
 #endif

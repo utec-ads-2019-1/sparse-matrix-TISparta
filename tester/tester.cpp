@@ -26,6 +26,7 @@ void Tester::execute () {
       testScalarMultiplication <MT> (scalar, matrix1, checker[test]);
       testSubstractionMultiplication <MT> (matrix1, matrix2, checker[test]);
       testTranspose(matrix1, checker[test]);
+      testDelete(matrix1, checker[test]);
     } catch (const char* message) {
       std::cerr << "Exception raised in test " << test + 1 << std::endl;
       std::cerr << message << std::endl;
@@ -128,3 +129,20 @@ void Tester::testTranspose (const Matrix <T>& matrix, Checker <T>& checker) {
   Matrix <T> matrix_transpose = matrix.transpose();
   checker.isEqual(sparse_transpose, matrix_transpose, "transpose");
 }
+
+template <typename T>
+void Tester::testDelete (const Matrix <T>& matrix, Checker <T>& checker) {
+  SparseMatrix <T> sparse_delete = setSparseMatrix <T> (matrix);
+  Matrix <T> matrix_delete = matrix;
+  int number_elements = matrix.getNumberRows() * matrix.getNumberColumns();
+  int iterations = number_elements / 2;
+  while (iterations--) {
+    int pos = Mocker::generateRandomNumber <T> (0, number_elements - 1);
+    int row = pos / matrix.getNumberColumns();
+    int column = pos % matrix.getNumberColumns();
+    sparse_delete.set(row, column, 0);
+    matrix_delete.set(row, column, 0);
+  }
+  checker.isEqual(sparse_delete, matrix_delete, "deletion");
+}
+

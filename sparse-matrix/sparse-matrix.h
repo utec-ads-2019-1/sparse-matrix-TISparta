@@ -43,13 +43,16 @@ class SparseMatrix {
       if (not (0 <= row and row < n_rows)) throw "Row index out of scope";
       if (not (0 <= column and column < n_columns)) throw "Column index out of scope";
       Node <T>* new_node = new Node <T> (row, column, value);
+      node_to_delete = nullptr;
       setRow(row, column, new_node);
       setColumn(row, column, new_node);
+      if (node_to_delete) delete node_to_delete;
     }
 
     T operator () (unsigned row, unsigned column) const {
       if (not (0 <= row and row < n_rows)) throw "Row index out of scope";
       if (not (0 <= column and column < n_columns)) throw "Column index out of scope";
+      // By intuition, this should make the code faster in promedy
       if (row_size[row] <= column_size[column]) return getByRow(row, column);
       return getByColumn(row, column);
     }
@@ -69,7 +72,7 @@ class SparseMatrix {
     }
 
     // A little heavy implementation but in O(number of 1s in both matrices)
-    // Substraction and multiplication are basically a copy-paste of this
+    // Substraction, multiplication and transpose are basically a copy-paste of this
     // function
     SparseMatrix <T> operator + (const SparseMatrix <T>& other) const {
       if (n_rows != other.getNumberRows()) throw "The number of rows doest not match";
@@ -208,6 +211,7 @@ class SparseMatrix {
     std::vector <unsigned> row_size;
     std::vector <Node <T>*> column_first_node;
     std::vector <unsigned> column_size;
+    Node <T>* node_to_delete;
 
     void setRow (int row, int column, Node <T>*& node) {
       Node <T>* prev = nullptr;
@@ -221,12 +225,12 @@ class SparseMatrix {
       while (cur) {
         if (cur -> column == column) {
           if (node -> value == 0) {
+            node_to_delete = cur;
             if (not prev) {
               row_first_node[row] = cur -> next;
             } else {
               Node <T>* tmp = cur;
               prev -> next = cur -> next;
-              delete tmp;
             }
             row_size[row]--;
           } else { 
